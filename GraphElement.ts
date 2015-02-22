@@ -9,7 +9,7 @@
         /**
         描画
         */
-        paint: (stage: createjs.Stage, min: number, max: number, x: number, width: number,xmin: number, xmax: number, ymin: number, ymax: number) => void;
+        paint: (stage: createjs.Stage, min: number, max: number, x: number, width: number, xmin: number, xmax: number, ymin: number, ymax: number) => void;
         /**
         削除
         */

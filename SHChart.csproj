@@ -30,10 +30,13 @@
   <ItemGroup>
     <TypeScriptCompile Include="CandleStick.ts" />
     <TypeScriptCompile Include="Chart.ts" />
+    <TypeScriptCompile Include="DateVal.ts" />
     <TypeScriptCompile Include="GraphElement.ts" />
     <TypeScriptCompile Include="Graph.ts" />
     <TypeScriptCompile Include="GraphType.ts" />
+    <TypeScriptCompile Include="Hiashi.ts" />
     <TypeScriptCompile Include="LineChart.ts" />
+    <TypeScriptCompile Include="Stats.ts" />
     <TypeScriptCompile Include="Test.ts" />
     <TypeScriptCompile Include="Scripts\typings\createjs-lib\createjs-lib.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\easeljs\easeljs.d.ts" />

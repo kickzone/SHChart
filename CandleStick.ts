@@ -78,5 +78,14 @@ module SHChart {
             if(this.uShadow) stage.removeChild(this.uShadow);
             if(this.lShadow) stage.removeChild(this.lShadow);
         }
+
+        public static InputGraphByHiashi(aHiashi: Array<Hiashi>, graph: Graph): void {
+            for (var i in aHiashi) {
+                var h: SHChart.Hiashi = aHiashi[i];
+                var ge: SHChart.GraphElement = new SHChart.CandleStick(new Date(h.ymd), Number(h.open), Number(h.high), Number(h.low), Number(h.close));
+
+                graph.addData(ge);
+            }
+        }
     }
 }
