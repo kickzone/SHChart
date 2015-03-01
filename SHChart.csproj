@@ -41,6 +41,11 @@
     <TypeScriptCompile Include="Scripts\typings\createjs-lib\createjs-lib.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\easeljs\easeljs.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\tweenjs\tweenjs.d.ts" />
+    <TypeScriptCompile Include="XAxis.ts" />
+    <TypeScriptCompile Include="XAxisScale.ts" />
+    <TypeScriptCompile Include="XRange.ts" />
+    <TypeScriptCompile Include="YAxis.ts" />
+    <TypeScriptCompile Include="YAxisScale.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery-2.1.3.min.map" />

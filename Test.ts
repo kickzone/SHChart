@@ -2,15 +2,15 @@
 
 
 function Test(canvas: HTMLCanvasElement) {
-    var chart: SHChart.Chart = new SHChart.Chart(canvas);
     canvas.width = 800;
     canvas.height = 600;
+    var chart: SHChart.Chart = new SHChart.Chart(canvas);
     var sma25DV = SHChart.Stats.CalcSMA(odakyuStock, 25);
     var sma75DV = SHChart.Stats.CalcSMA(odakyuStock, 75);
 
-    var gHiashi: SHChart.Graph = new SHChart.Graph(1, 0, 800, 100, 600);
-    var gSma25: SHChart.Graph = new SHChart.Graph(1, 0, 800, 100, 600);
-    var gSma75: SHChart.Graph = new SHChart.Graph(1, 0, 800, 100, 600);
+    var gHiashi: SHChart.Graph = new SHChart.Graph(1, 100, 500);
+    var gSma25: SHChart.Graph = new SHChart.Graph(1, 100, 500);
+    var gSma75: SHChart.Graph = new SHChart.Graph(1, 100, 500);
 
     var sma25Prev: SHChart.LineChart;
     var sma75Prev: SHChart.LineChart;
