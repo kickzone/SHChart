@@ -12,7 +12,7 @@
         */
         private textScale: createjs.Text;
 
-        constructor(public x: number, public y: number, public date: Date) {
+        constructor(public x: number, public ymin, public ymax: number, public date: Date) {
         }
 
         public drop(stage: createjs.Stage) {
@@ -25,16 +25,16 @@
             var g: createjs.Graphics = new createjs.Graphics();
             //ToDo:色の変更
             g.beginStroke("#dfdfdf")
-                .moveTo(this.x, 0)
-                .lineTo(this.x, this.y)
+                .moveTo(this.x, this.ymin)
+                .lineTo(this.x, this.ymax)
                 .closePath();
             this.axisScale = new createjs.Shape(g);
             stage.addChild(this.axisScale);
             //文字
-            var str = this.date.getFullYear().toString() + "/" + this.date.getMonth() + "/" + this.date.getDate();
+            var str = this.date.getFullYear().toString() + "/" + (this.date.getMonth()+1).toString() + "/" + this.date.getDate();
             var t = new createjs.Text(str, "12px Arial", "#000000");
             t.x = this.x + 5;
-            t.y = this.y + 10;
+            t.y = this.ymax + 10;
             stage.addChild(t);
             this.textScale = t;
         }

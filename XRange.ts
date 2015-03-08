@@ -30,5 +30,14 @@
             }
             return 0;
         }
+
+        public getDate(x: number) {
+            for (var i in this.xpos) {
+                var xmin: number = this.xpos[i] - this.xsize / 2;
+                var xmax: number = this.xpos[i] + this.xsize / 2;
+                if (xmin <= x && x < xmax) return this.dates[i];
+            }
+            return null;
+        }
     }
 } 

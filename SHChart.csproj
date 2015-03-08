@@ -36,6 +36,7 @@
     <TypeScriptCompile Include="GraphType.ts" />
     <TypeScriptCompile Include="Hiashi.ts" />
     <TypeScriptCompile Include="LineChart.ts" />
+    <TypeScriptCompile Include="MouseInfo.ts" />
     <TypeScriptCompile Include="Stats.ts" />
     <TypeScriptCompile Include="Test.ts" />
     <TypeScriptCompile Include="Scripts\typings\createjs-lib\createjs-lib.d.ts" />

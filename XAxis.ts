@@ -99,7 +99,8 @@
             var scaleDates: Array<Date> = this.DecideScale(xrange);
             for (var i in scaleDates) {
                 var date: Date = scaleDates[i];
-                var scale: XAxisScale = new XAxisScale(xrange.GetX(date), this.y, date);
+                //ToDo: 100をどこかで決定する必要がある
+                var scale: XAxisScale = new XAxisScale(xrange.GetX(date), 100, this.y, date);
                 scale.paint(stage);
                 this.scales.push(scale);
             }

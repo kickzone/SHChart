@@ -12,7 +12,10 @@ module SHChart {
         //陽線か？
         private isYang: boolean;
 
-        constructor(public date: Date, public open: number, public high: number, public low: number, public close: number) {
+        private paintX: number;
+        private paintY: number;
+
+        constructor(private parent: Graph, public date: Date, public open: number, public high: number, public low: number, public close: number) {
             this.isYang = open < close;
         }
 
@@ -22,6 +25,18 @@ module SHChart {
 
         public getMin(): number {
             return this.low;
+        }
+        
+        public getVal(): number {
+            return this.close;
+        }
+
+        public getX(): number {
+            return this.paintX;
+        }
+
+        public getY(): number {
+            return this.paintY;
         }
 
         public paint(stage: createjs.Stage, min: number, max: number, x: number, width: number, xmin: number, xmax: number, ymin: number, ymax: number): void  {
@@ -49,6 +64,10 @@ module SHChart {
             }
             this.body = new createjs.Shape(g);
             stage.addChild(this.body);
+
+            //マウスイベント用の座標保存
+            this.paintX = x;
+            this.paintY = (this.isYang ? bodyYmin : bodyYmax); 
 
             //ヒゲの描画
             if (uShadowYmin < bodyYmin) {
@@ -79,10 +98,24 @@ module SHChart {
             if(this.lShadow) stage.removeChild(this.lShadow);
         }
 
+        public needDash(): boolean {
+            return this.parent.needDash;
+        }
+
+        public infoStr(): string {
+            var retStr: string;
+            retStr = "始値: " + this.open.toString() + "\n高値: " + this.high.toString() + "\n安値: " + this.low.toString() + "\n終値: " + this.close.toString();
+            return retStr;
+        }
+
+        public getParent(): Graph {
+            return this.parent;
+        }
+
         public static InputGraphByHiashi(aHiashi: Array<Hiashi>, graph: Graph): void {
             for (var i in aHiashi) {
                 var h: SHChart.Hiashi = aHiashi[i];
-                var ge: SHChart.GraphElement = new SHChart.CandleStick(new Date(h.ymd), Number(h.open), Number(h.high), Number(h.low), Number(h.close));
+                var ge: SHChart.GraphElement = new SHChart.CandleStick(graph, new Date(h.ymd), Number(h.open), Number(h.high), Number(h.low), Number(h.close));
 
                 graph.addData(ge);
             }

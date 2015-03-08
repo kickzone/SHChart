@@ -6,6 +6,9 @@
         date: Date;
         getMax: () => number;
         getMin: () => number;
+        getVal: () => number;
+        getX: () => number;
+        getY: () => number;
         /**
         描画
         */
@@ -14,5 +17,20 @@
         削除
         */
         drop: (stage: createjs.Stage) => void;
+
+        /**
+        破線を引くかどうか
+        */
+        needDash: () => boolean;
+
+        /*
+        DOMに出力する文字列をゲット
+        */
+        infoStr: () => string;
+
+        /**
+        親のグラフを得る
+        */
+        getParent: () => Graph;
     }
 }
