@@ -27,9 +27,9 @@
             { rangeMin: 31, rangeMax: 50, wm: 1, interval: 2 },
             { rangeMin: 51, rangeMax: 150, wm: 2, interval: 1 },
             { rangeMin: 151, rangeMax: 200, wm: 2, interval: 2 },
-            { rangeMin: 201, rangeMax: 250, wm: 2, interval: 3 },
-            { rangeMin: 251, rangeMax: 500, wm: 2, interval: 6 },
-            { rangeMin: 501, rangeMax: 99999, wm: 2, interval: 12 },
+            { rangeMin: 201, rangeMax: 500, wm: 2, interval: 3 },
+            { rangeMin: 501, rangeMax: 1000, wm: 2, interval: 6 },
+            { rangeMin: 1001, rangeMax: 99999, wm: 2, interval: 12 },
         ]; 
 
         constructor(public xmin: number, public xmax: number, public y: number) {

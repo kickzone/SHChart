@@ -4,10 +4,25 @@
     */
     export interface GraphElement {
         date: Date;
+        /**
+        最大値
+        */
         getMax: () => number;
+        /**
+        最小値
+        */
         getMin: () => number;
+        /**
+        代表値
+        */
         getVal: () => number;
+        /**
+        canvas上の座標 マウス情報で使用
+        */
         getX: () => number;
+        /**
+        canvas上の座標 マウス情報で使用
+        */
         getY: () => number;
         /**
         描画

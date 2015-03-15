@@ -21,6 +21,7 @@
     <Content Include="app.css" />
     <Content Include="index.html" />
     <Content Include="packages.config" />
+    <Content Include="ajax_getmeigara.php" />
     <None Include="Scripts\jquery-2.1.3.intellisense.js" />
     <Content Include="Scripts\easeljs-0.8.0.min.js" />
     <Content Include="Scripts\jquery-2.1.3.js" />
@@ -36,12 +37,15 @@
     <TypeScriptCompile Include="GraphType.ts" />
     <TypeScriptCompile Include="Hiashi.ts" />
     <TypeScriptCompile Include="LineChart.ts" />
+    <TypeScriptCompile Include="Meigara.ts" />
     <TypeScriptCompile Include="MouseInfo.ts" />
+    <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="SimpleView.ts" />
     <TypeScriptCompile Include="Stats.ts" />
-    <TypeScriptCompile Include="Test.ts" />
     <TypeScriptCompile Include="Scripts\typings\createjs-lib\createjs-lib.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\easeljs\easeljs.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\tweenjs\tweenjs.d.ts" />
+    <TypeScriptCompile Include="Test.ts" />
     <TypeScriptCompile Include="XAxis.ts" />
     <TypeScriptCompile Include="XAxisScale.ts" />
     <TypeScriptCompile Include="XRange.ts" />

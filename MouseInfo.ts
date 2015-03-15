@@ -30,7 +30,9 @@
             var g: createjs.Graphics = new createjs.Graphics();
             //ToDo:色の変更
             g.setStrokeStyle(1).beginStroke("#000000");
+            //破線の数(*2)を計算
             var dashes: number = (this.ymax - this.ymin) / this.DASH_LEN;
+            //半分ずつ線を引く
             for (var y: number = this.ymin, q: number = 0; q < dashes; y += this.DASH_LEN, q++) {
                 if (q % 2 == 0) g.moveTo(x, y);
                 else g.lineTo(x, y);
@@ -43,7 +45,9 @@
             var g: createjs.Graphics = new createjs.Graphics();
             //ToDo:色の変更
             g.setStrokeStyle(1).beginStroke("#000000");
+            //破線の数(*2)を計算
             var dashes: number = (this.xmax - this.xmin) / this.DASH_LEN;
+            //半分ずつ線を引く
             for (var x: number = this.xmin, q: number = 0; q < dashes; x += this.DASH_LEN, q++) {
                 if (q % 2 == 0) g.moveTo(x, y);
                 else g.lineTo(x, y);

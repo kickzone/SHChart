@@ -4,8 +4,14 @@
     グラフ1つ分を表すクラス
     */
     export class Graph {
-        
+        /**
+        全要素
+        */
         public elements: Array<GraphElement> = [];
+        /**
+        現在有効な要素
+        */
+        public validElements: Array<GraphElement> = [];
         private xrange: XRange;
 
         /**
@@ -28,19 +34,22 @@
         */
         public paint(stage: createjs.Stage, xrange: XRange, min: number, max: number) {
             this.xrange = xrange;
-            //範囲内のelementの数
-            var validElements: Array<GraphElement> = [];
+            //まず描画中の要素を削除
+            for (var i in this.validElements) {
+                this.validElements[i].drop(stage);
+            }
+            this.validElements = [];
+
+            //有効なelementを決定
             for (var i in this.elements) {
                 var element: GraphElement = this.elements[i];
                 if (element.date >= xrange.start && element.date <= xrange.end) {
-                    validElements.push(element);
+                    this.validElements.push(element);
                 }
             }
-            for (var i in validElements) {
-                var element: GraphElement = validElements[i];
-                //削除
-                element.drop(stage);
-                //描画
+            //描画
+            for (var i in this.validElements) {
+                var element: GraphElement = this.validElements[i];
                 element.paint(stage, min, max, xrange.GetX(element.date), xrange.xsize, xrange.xmin, xrange.xmax, this.ymin, this.ymax);
             }
         }
@@ -59,6 +68,9 @@
             }
         }
 
+        /**
+        情報出力用の文字列を得る GraphElementに尋ねる
+        */
         public getInfoStr(date: Date) {
             for (var i in this.elements) {
                 var element: GraphElement = this.elements[i];

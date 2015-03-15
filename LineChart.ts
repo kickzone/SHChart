@@ -79,5 +79,15 @@ module SHChart {
                 graph.addData(lc);
             }
         }
+
+        public static InputGraphByHiashi(aDv: Array<Hiashi>, color: string, graph: Graph): void {
+            var prevLc: LineChart;
+            for (var i in aDv) {
+                var dv: SHChart.Hiashi = aDv[i];
+                var lc: SHChart.LineChart = new SHChart.LineChart(graph, new Date(dv.ymd), Number(dv.close), color, prevLc);
+                prevLc = lc;
+                graph.addData(lc);
+            }
+        }
     }
 } 

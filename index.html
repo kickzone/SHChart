@@ -22,11 +22,20 @@
 </head>
 <body>
     <h1>SHChart</h1>
-
+    <div class="cpanel">
+        コード：<input type="text" id="meigara" value="9007"><br /> <input type="button" id="view" value="株価表示" />
+    </div>
+    <H2 id="mname"></H2>
     <canvas id="chart"></canvas>
     <div id="info"></div>
     <script>
-        Test($("#chart")[0], $("#info")[0]);
+        $("#view").click(View);
+
+        function View(){
+            var option = new SHChart.SimpleViewOption();
+            option.mcode = $("#meigara").val();
+            SHChart.SimpleView.View($("#chart")[0], $("#info")[0], $("#mname")[0], option);
+        }
     </script>
 </body>
 </html>
