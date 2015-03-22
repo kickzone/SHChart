@@ -4,6 +4,7 @@
     */
     export interface GraphElement {
         date: Date;
+        dateNum: number;
         /**
         最大値
         */
@@ -47,5 +48,20 @@
         親のグラフを得る
         */
         getParent: () => Graph;
+
+        /**
+        日足、週足、月足変換用 全Elementを得る
+        */
+        getAllElements: () => Array<GraphElement>;
+
+        /**
+        日足、週足、月足変換用 aggrregateするElementを追加
+        */
+        addElement: (element: GraphElement) => void;
+
+        /**
+        日足、週足、月足変換用 初期化
+        */
+        initElements: () => void;
     }
 }

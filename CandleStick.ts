@@ -1,7 +1,6 @@
 ﻿/// <reference path="scripts/typings/easeljs/easeljs.d.ts" />
 module SHChart {
     export class CandleStick implements GraphElement {
-
         //ローソク本体
         private body: createjs.Shape;
         //上ヒゲ
@@ -15,20 +14,43 @@ module SHChart {
         private paintX: number;
         private paintY: number;
 
+        private allElements: Array<CandleStick> = [];
+        public dateNum: number;
+
         constructor(private parent: Graph, public date: Date, public open: number, public high: number, public low: number, public close: number) {
+            this.dateNum = date.getTime();
             this.isYang = open < close;
+            this.allElements.push(this);
         }
 
         public getMax(): number {
-            return this.high;
+            var max = 0;
+            for (var i in this.allElements) {
+                var val = this.allElements[i].high;
+                if (i == 0 || max < val) max = val;
+            }
+            return max;
         }
 
         public getMin(): number {
-            return this.low;
+            var min = 0;
+            for (var i in this.allElements) {
+                var val = this.allElements[i].low;
+                if (i == 0 || min > val) min = val;
+            }
+            return min;
         }
         
         public getVal(): number {
-            return this.close;
+            return this.allElements[this.allElements.length - 1].close;
+        }
+
+        public getOpen(): number {
+            return this.allElements[0].open;
+        }
+
+        public getClose(): number {
+            return this.getVal();
         }
 
         public getX(): number {
@@ -38,6 +60,20 @@ module SHChart {
         public getY(): number {
             return this.paintY;
         }
+        
+        public getAllElements(): Array<GraphElement> {
+            return this.allElements;
+        }
+
+        public initElements() {
+            this.allElements = [];
+            this.allElements.push(this);
+        }
+
+        public addElement(element: GraphElement) {
+            var candle = <CandleStick>element;
+            this.allElements.push(candle);
+        }
 
         public paint(stage: createjs.Stage, min: number, max: number, x: number, width: number, xmin: number, xmax: number, ymin: number, ymax: number): void  {
             //座標決定
@@ -45,10 +81,10 @@ module SHChart {
             var bodyWidth = width * 0.8;
             var bodyXmin = x - bodyWidth / 2;
             var bodyXmax = x + bodyWidth / 2;
-            var bodyYmin = ymin + (ymax - ymin) * ((max - (this.isYang ? this.close : this.open)) / (max - min));
-            var bodyYmax = ymin + (ymax - ymin) * ((max - (this.isYang ? this.open : this.close)) / (max - min));
-            var uShadowYmin = ymin + (ymax - ymin) * ((max - this.high) / (max - min));
-            var lShadowYmax = ymin + (ymax - ymin) * ((max - this.low) / (max - min));
+            var bodyYmin = ymin + (ymax - ymin) * ((max - (this.isYang ? this.getClose() : this.getOpen())) / (max - min));
+            var bodyYmax = ymin + (ymax - ymin) * ((max - (this.isYang ? this.getOpen() : this.getClose())) / (max - min));
+            var uShadowYmin = ymin + (ymax - ymin) * ((max - this.getMax()) / (max - min));
+            var lShadowYmax = ymin + (ymax - ymin) * ((max - this.getMin()) / (max - min));
             //本体描画
             var g: createjs.Graphics = new createjs.Graphics();
             //ToDo:色の変更
@@ -102,9 +138,41 @@ module SHChart {
             return this.parent.needDash;
         }
 
+        private DateStr(date: Date): string {
+            var w = ["日", "月", "火", "水", "木", "金", "土"];
+            var str: string = date.getFullYear().toString() + "/" + (date.getMonth() + 1).toString() + "/" + date.getDate() + "(" + w[date.getDay()] + ")";
+            return str;
+        }
+
         public infoStr(): string {
             var retStr: string;
-            retStr = "始値: " + this.open.toString() + "\n高値: " + this.high.toString() + "\n安値: " + this.low.toString() + "\n終値: " + this.close.toString();
+
+            retStr = "始値: " + this.getOpen().toString();
+            if (this.allElements.length > 1) {
+                retStr += " [" + this.DateStr(this.allElements[0].date) + "]";
+            }
+            var max = this.getMax();
+            retStr += "\n高値: " + max.toString();
+            if (this.allElements.length > 1) {
+                for (var i in this.allElements) {
+                    if (this.allElements[i].high == max) {
+                        retStr += " [" + this.DateStr(this.allElements[i].date) + "]";
+                    }
+                }
+            }
+            var min = this.getMin();
+            retStr += "\n安値: " + min.toString();
+            if (this.allElements.length > 1) {
+                for (var i in this.allElements) {
+                    if (this.allElements[i].low == min) {
+                        retStr += " [" + this.DateStr(this.allElements[i].date) + "]";
+                    }
+                }
+            }
+            retStr += "\n終値: " + this.getClose().toString();
+            if (this.allElements.length > 1) {
+                retStr += " [" + this.DateStr(this.allElements[this.allElements.length-1].date) + "]";
+            }
             return retStr;
         }
 

@@ -19,6 +19,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.css" />
+    <Content Include="funcs.php" />
     <Content Include="index.html" />
     <Content Include="packages.config" />
     <Content Include="ajax_getmeigara.php" />

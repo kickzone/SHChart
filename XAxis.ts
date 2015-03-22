@@ -29,7 +29,8 @@
             { rangeMin: 151, rangeMax: 200, wm: 2, interval: 2 },
             { rangeMin: 201, rangeMax: 500, wm: 2, interval: 3 },
             { rangeMin: 501, rangeMax: 1000, wm: 2, interval: 6 },
-            { rangeMin: 1001, rangeMax: 99999, wm: 2, interval: 12 },
+            { rangeMin: 1001, rangeMax: 2000, wm: 2, interval: 12 },
+            { rangeMin: 2001, rangeMax: 99999, wm: 2, interval: 24 },
         ]; 
 
         constructor(public xmin: number, public xmax: number, public y: number) {
@@ -42,7 +43,7 @@
             //どの解像度を使うか決定する
             var st: ScaleTable;
             for (var i in this.SCALE_TABLE) {
-                if (this.SCALE_TABLE[i].rangeMin <= xrange.dates.length && xrange.dates.length <= this.SCALE_TABLE[i].rangeMax) {
+                if (this.SCALE_TABLE[i].rangeMin <= xrange.trueDateNum && xrange.trueDateNum <= this.SCALE_TABLE[i].rangeMax) {
                     st = this.SCALE_TABLE[i];
                     break;
                 }

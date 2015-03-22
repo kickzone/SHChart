@@ -8,8 +8,9 @@
         public end: Date;
         private xpos: Array<number> = [];
         public xsize: number;
+        private dateNum: Array<number> = [];
 
-        constructor(public dates: Array<Date>, public xmin: number, public xmax: number) {
+        constructor(public dates: Array<Date>, public xmin: number, public xmax: number, public trueDateNum: number) {
             //開始日、終了日
             this.start = dates[0];
             this.end = dates[dates.length - 1];
@@ -19,12 +20,14 @@
 
             for (var i in this.dates) {
                 this.xpos.push(this.xsize * i + this.xsize / 2);
+                this.dateNum.push(this.dates[i].getTime());
             }
         }
 
         public GetX(date: Date): number {
+            var dateNum: number = date.getTime();
             for (var i in this.dates) {
-                if (this.dates[i].getTime() == date.getTime()) {
+                if (this.dateNum[i] == dateNum) {
                     return this.xpos[i];
                 }
             }

@@ -16,7 +16,11 @@
         private info: HTMLDivElement;
         private xrange: XRange;
         public allDates: Array<Date> = [];
+        public allDatesNum: Array<number> = [];
         private XRANGE_MIN = 25;
+        public htn: HTN = HTN.None;
+        private SHU_DAYS = 250;
+        private TSUKI_DAYS = 1250;
 
         constructor(canvas: HTMLCanvasElement) {
             this.canvas = canvas;
@@ -41,31 +45,49 @@
         */
         public addGraph(graph: Graph) {
             this.graphs.push(graph);
-            //allDatesをアップデート
-            for (var j in graph.elements) {
-                var element: GraphElement = graph.elements[j];
-                var bFindDate: boolean = false;
-                for (var j in this.allDates) {
-                    if (element.date.getTime() == this.allDates[j].getTime()) {
-                        bFindDate = true;
-                        break;
-                    }
-                }
-                if (!bFindDate) this.allDates.push(element.date);
+            if (this.allDates.length == 0) {
+                this.UpdateAllDates();
             }
-            this.allDates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
         }
 
         public setInfo(info: HTMLDivElement) {
             this.info = info;
         }
 
+        private UpdateAllDates() {
+            //allDatesをアップデート
+            this.allDates = [];
+            this.allDatesNum = [];
+            var graph: Graph = this.graphs[0];
+            for (var i in graph.elements) {
+                var element: GraphElement = graph.elements[i];
+                this.allDates.push(element.date);
+            }
+            this.allDates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
+            for (var i in this.allDates) {
+                this.allDatesNum.push(this.allDates[i].getTime());
+            }
+        }
+
         public paint(start: Date, end: Date) {
+
+            //描画単位決定
+            var htn = this.decideHTN(start, end);
+            if (htn != this.htn) {
+                for (var i in this.graphs) {
+                    var graph: Graph = this.graphs[i];
+                    graph.convertScale(htn);
+                }
+                this.htn = htn;
+                this.UpdateAllDates();
+            }
+
             //グループごとのmin, maxを得る
             //全グラフから範囲内の日付の配列も得る
             var min: Array<number> = [];
             var max: Array<number> = [];
             var dates: Array<Date> = [];
+            var trueDateNum: number = 0;
             for (var i in this.graphs) {
                 var graph: Graph = this.graphs[i];
                 for (var j in graph.elements) {
@@ -74,20 +96,24 @@
                     if (start <= element.date && element.date <= end) {
                         if (min[graph.group] == undefined || min[graph.group] > element.getMin()) min[graph.group] = element.getMin();
                         if (max[graph.group] == undefined || max[graph.group] < element.getMax()) max[graph.group] = element.getMax();
-                        var bFindDate: boolean = false;
-                        for (var j in dates) {
-                            if (element.date.getTime() == dates[j].getTime()) {
-                                bFindDate = true;
-                                break;
-                            }
+                        if (i == 0) {
+                            //var bFindDate: boolean = false;
+                            //for (var j in dates) {
+                            //    if (element.date.getTime() == dates[j].getTime()) {
+                            //        bFindDate = true;
+                            //        break;
+                            //    }
+                            //}
+                            //if (!bFindDate) dates.push(element.date);
+                            dates.push(element.date);
+                            trueDateNum += element.getAllElements().length;
                         }
-                        if (!bFindDate) dates.push(element.date);
                     }
                 }
             }
             dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
             var canvas: HTMLCanvasElement = <HTMLCanvasElement>this.stage.canvas;
-            this.xrange = new XRange(dates, 0, canvas.width - this.YAXIS_GAP);
+            this.xrange = new XRange(dates, 0, canvas.width - this.YAXIS_GAP, trueDateNum);
 
             //X軸描画
             this.xaxis.paint(this.stage, this.xrange);
@@ -98,7 +124,7 @@
             //グラフ描画
             for (var i in this.graphs) {
                 var graph: Graph = this.graphs[i];
-                graph.paint(this.stage, this.xrange, min[graph.group], max[graph.group]);
+                graph.paint(this.stage, this.xrange, min[graph.group], max[graph.group], this.htn);
             }
 
 
@@ -106,9 +132,29 @@
             this.stage.update();
         }
 
+        /**
+        日足、週足、月足のどれを使うか
+        */
+        private decideHTN(start: Date, end: Date): HTN {
+            var datesNum: number = 0;
+            for (var i in this.graphs[0].elements) {
+                var element: GraphElement = this.graphs[0].elements[i];
+                if (start <= element.date && element.date <= end) {
+                    datesNum += element.getAllElements().length;
+                }
+            }
+            if (datesNum < this.SHU_DAYS) {
+                return HTN.Hiashi;
+            } else if (datesNum < this.TSUKI_DAYS) {
+                return HTN.Shuashi;
+            }
+            return HTN.Tsukiashi;
+        }
+
         private allDateIdx(date: Date): number{
-            for (var i = 0; i < this.allDates.length; i++) {
-                if (this.allDates[i].getTime() == date.getTime()) {
+            var targetTime = date.getTime();
+            for (var i = 0; i < this.allDatesNum.length; i++) {
+                if (this.allDatesNum[i] == targetTime) {
                     return i;
                 }
             }
@@ -137,7 +183,7 @@
                             endIdx = this.allDates.length - 1;
                         }
                         //画面更新
-                        if (this.allDates[startIdx].getTime() != this.xrange.start.getTime()) {
+                        if (this.allDatesNum[startIdx] != this.xrange.start.getTime()) {
                             this.paint(this.allDates[startIdx], this.allDates[endIdx]);
                         }
                         this.dragEvents.currentX = e.pageX;
@@ -157,10 +203,14 @@
             //divタグ用に出力する情報
             if (this.info) {
                 this.info.innerHTML = "";
+                var str: string = "";
+                if (this.htn == HTN.Hiashi) str = "日足 ";
+                else if (this.htn == HTN.Shuashi) str = "週足 ";
+                else str = "月足 ";
                 var date: Date = this.xrange.getDate(xCanvas);
                 if (date) {
                     var w = ["日", "月", "火", "水", "木", "金", "土"];
-                    var str: string = date.getFullYear().toString() + "/" + (date.getMonth() + 1).toString() + "/" + date.getDate() + "(" + w[date.getDay()] + ")";
+                    str += date.getFullYear().toString() + "/" + (date.getMonth() + 1).toString() + "/" + date.getDate() + "(" + w[date.getDay()] + ")";
                     for (var i in this.graphs) {
                         var graphStr = this.graphs[i].getInfoStr(date);
                         if (graphStr != "") {
@@ -238,6 +288,16 @@
             }
 
         return false;
+        }
     }
+
+    /**
+    日足、週足、月足
+    */
+    export enum HTN {
+        None,
+        Hiashi,
+        Shuashi,
+        Tsukiashi
     }
 }

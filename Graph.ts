@@ -13,6 +13,7 @@
         */
         public validElements: Array<GraphElement> = [];
         private xrange: XRange;
+        public htn: HTN = HTN.None;
 
         /**
         @param group {number} - グループ番号、min:maxの値の範囲を決める時に使用する。例えば株価と移動平均を同一グループにする、出来高は別グループにする、など。
@@ -32,7 +33,7 @@
         /**
         描画
         */
-        public paint(stage: createjs.Stage, xrange: XRange, min: number, max: number) {
+        public paint(stage: createjs.Stage, xrange: XRange, min: number, max: number, htn: HTN) {
             this.xrange = xrange;
             //まず描画中の要素を削除
             for (var i in this.validElements) {
@@ -55,14 +56,88 @@
         }
 
         /**
+        日足、週足、月足を変換する
+        */
+        public convertScale(htn: HTN) {
+            if (htn == this.htn) return;
+            this.htn = htn;
+            //展開
+            var allElements: Array<GraphElement> = [];
+            for (var i in this.elements) {
+                var elements: Array<GraphElement> = this.elements[i].getAllElements();
+                for (var j in elements) {
+                    allElements.push(elements[j]);
+                }
+            }
+            //日、週、月にまとめる
+            var prevElement: GraphElement;
+            var currentElement: GraphElement;
+            this.elements = [];
+            switch (htn) {
+                case HTN.Hiashi:
+                    for (var i in allElements) {
+                        currentElement = allElements[i];
+                        currentElement.initElements();
+                        this.elements.push(currentElement);
+                        //折れ線グラフ対応
+                        var l: any = currentElement;
+                        if (l.prev) {
+                            l.prev = prevElement;
+                        }
+                        prevElement = currentElement;
+                    }
+                    break;
+                case HTN.Shuashi:
+                case HTN.Tsukiashi:
+                    currentElement = allElements[0];
+                    currentElement.initElements();
+                    this.elements.push(currentElement);
+                    prevElement = currentElement;
+                    for (var i in allElements) {
+                        if (i == 0) continue;
+                        var thisElement = allElements[i];
+                        var stChange = false;
+                        switch (htn) {
+                            case HTN.Shuashi:
+                                //週が変わった
+                                if (prevElement.date.getDay() >= thisElement.date.getDay()) stChange = true;
+                                break;
+                            case HTN.Tsukiashi:
+                                //月が変わった
+                                if (prevElement.date.getMonth() < thisElement.date.getMonth()
+                                    || prevElement.date.getFullYear() < thisElement.date.getFullYear()) stChange = true;
+                                break;
+                        }
+                        if (stChange) {
+                            //折れ線グラフ対応
+                            var l: any = currentElement;
+                            if (l.prev && this.elements.length > 1) {
+                                l.prev = this.elements[this.elements.length - 2];
+                            }
+                            currentElement = thisElement;
+                            currentElement.initElements();
+                            this.elements.push(currentElement);
+                        }
+                        else {
+                            currentElement.addElement(thisElement);
+                        }
+                        prevElement = thisElement;
+                    }
+                    break;
+            }
+        }
+
+        /**
         マウス連動情報描画
         */
         public paintMouseInfo(x: number, mi: MouseInfo) {
-            var date = this.xrange.getDate(x);
+            var date: Date = this.xrange.getDate(x);
+            if (!date) return;
+            var dateNum = date.getTime();
             if (date == null) return;
             for (var i in this.elements) {
                 var element: GraphElement = this.elements[i];
-                if (element.date.getTime() == date.getTime()) {
+                if (element.dateNum == dateNum) {
                     mi.paint(element);
                 }
             }
@@ -72,9 +147,10 @@
         情報出力用の文字列を得る GraphElementに尋ねる
         */
         public getInfoStr(date: Date) {
+            var dateNum = date.getTime();
             for (var i in this.elements) {
                 var element: GraphElement = this.elements[i];
-                if (element.date.getTime() == date.getTime()) {
+                if (element.dateNum == dateNum) {
                     return element.infoStr();
                 }
             }

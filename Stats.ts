@@ -21,7 +21,7 @@
                     currentSum -= Number(nPrevHiashi.close);
                     dv.val = currentSum / days;
                 } else {
-                    dv.val = currentSum / (i + 1);
+                    dv.val = currentSum / (Number(i) + 1);
                 }
                 retArr[i] = dv;
             }

@@ -10,7 +10,7 @@ module SHChart {
             //銘柄情報、日足をゲット
             var meigara: Meigara;
             //$.ajax({
-             //   async: false,
+            //    async: false,
             //    type: "POST",
             //    url: "ajax_getmeigara.php",
             //    data: { mcode: option.mcode }
@@ -37,12 +37,12 @@ module SHChart {
             if (option.mainGraphType == 0) SHChart.CandleStick.InputGraphByHiashi(meigara.hiashi, gHiashi);
             else SHChart.LineChart.InputGraphByHiashi(meigara.hiashi, "#000000", gHiashi);
 
-            SHChart.LineChart.InputGraphByDateVal(sma25DV, "#228b22", gSma25);
-            SHChart.LineChart.InputGraphByDateVal(sma75DV, "#4169e1", gSma75);
+            if (option.useSMA25) SHChart.LineChart.InputGraphByDateVal(sma25DV, "#228b22", gSma25);
+            if (option.useSMA75) SHChart.LineChart.InputGraphByDateVal(sma75DV, "#4169e1", gSma75);
 
             chart.addGraph(gHiashi);
-            chart.addGraph(gSma25);
-            chart.addGraph(gSma75);
+            if (option.useSMA25) chart.addGraph(gSma25);
+            if (option.useSMA75) chart.addGraph(gSma75);
 
 
             //日付の指定がない場合は、100日間を表示

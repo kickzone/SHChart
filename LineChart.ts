@@ -10,7 +10,12 @@ module SHChart {
         private paintX: number;
         private paintY: number;
 
+        private allElements: Array<LineChart> = [];
+        public dateNum: number;
+
         constructor(private parent: Graph, public date: Date, public val: number, public color: string, public prev: LineChart) {
+            this.dateNum = date.getTime();
+            this.allElements.push(this);
         }
 
         public getMax(): number {
@@ -22,7 +27,7 @@ module SHChart {
         }
 
         public getVal(): number {
-            return this.val;
+            return this.allElements[this.allElements.length - 1].val;
         }
 
         public getX(): number {
@@ -33,12 +38,26 @@ module SHChart {
             return this.paintY;
         }
 
+        public getAllElements(): Array<GraphElement> {
+            return this.allElements;
+        }
+
+        public initElements() {
+            this.allElements = [];
+            this.allElements.push(this);
+        }
+
+        public addElement(element: GraphElement) {
+            var line = <LineChart>element;
+            this.allElements.push(line);
+        }
+
         public paint(stage: createjs.Stage, min: number, max: number, x: number, width: number, xmin: number, xmax: number, ymin: number, ymax: number): void {
             //直前の要素が設定されていなければ、線が引けないので何もしない
             if (!this.prev) return;
             var prevX = x - width;
-            var thisY = ymin + (ymax - ymin) * ((max - this.val) / (max - min));
-            var prevY = ymin + (ymax - ymin) * ((max - this.prev.val) / (max - min));
+            var thisY = ymin + (ymax - ymin) * ((max - this.getVal()) / (max - min));
+            var prevY = ymin + (ymax - ymin) * ((max - this.prev.getVal()) / (max - min));
             this.paintX = x;
             this.paintY = thisY;
             var g: createjs.Graphics = new createjs.Graphics();
